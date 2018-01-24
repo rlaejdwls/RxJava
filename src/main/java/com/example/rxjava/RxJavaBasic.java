@@ -5,19 +5,31 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.reactivestreams.Publisher;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.observables.ConnectableObservable;
 import io.reactivex.subjects.AsyncSubject;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.ReplaySubject;
 
 public class RxJavaBasic {
-	public static class ObservableBasic {
+	public static final int DIVIDE_SIZE = 40;
+	
+	public static class Basic {
+		public Basic() {
+			String title = this.getClass().getSimpleName();
+			int count = DIVIDE_SIZE - title.length();
+			for (int i = 0; i < count; i++) { System.out.print("-"); }
+			System.out.println(title);
+		}
+	}
+	public static class ObservableBasic extends Basic {
 		public void just() {
 			Disposable disposable = Observable.just("Hello", "Rx World")
 			.subscribe(
@@ -54,7 +66,7 @@ public class RxJavaBasic {
 			.subscribe(System.out::println);
 		}
 	}
-	public static class SingleBasic {
+	public static class SingleBasic extends Basic {
 		public void just() {
 			Single.just("Hello Single")
 			.subscribe(System.out::println);
@@ -80,7 +92,7 @@ public class RxJavaBasic {
 			.subscribe(System.out::println);
 		}
 	}
-	public static class AsyncSubjectBasic {
+	public static class AsyncSubjectBasic extends Basic {
 		public void example1() {
 			System.out.println("----------example1----------");
 			AsyncSubject<String> subject = AsyncSubject.create();
@@ -112,7 +124,7 @@ public class RxJavaBasic {
 			subject.subscribe(data -> System.out.println("AsyncSubscriber #3 => " + data));
 		}
 	}
-	public static class BehaviorSubjectBasic {
+	public static class BehaviorSubjectBasic extends Basic {
 		public void example1() {
 			System.out.println("----------example1----------");
 			BehaviorSubject<String> subject = BehaviorSubject.createDefault("6");
@@ -124,7 +136,7 @@ public class RxJavaBasic {
 			subject.onComplete();
 		}
 	}
-	public static class PublishSubjectBasic {
+	public static class PublishSubjectBasic extends Basic {
 		public void example1() {
 			System.out.println("----------example1----------");
 			PublishSubject<String> subject = PublishSubject.create();
@@ -136,7 +148,7 @@ public class RxJavaBasic {
 			subject.onComplete();
 		}
 	}
-	public static class ReplaySubjectBasic {
+	public static class ReplaySubjectBasic extends Basic {
 		public void example1() {
 			System.out.println("----------example1----------");
 			ReplaySubject<String> subject = ReplaySubject.create();
@@ -149,8 +161,28 @@ public class RxJavaBasic {
 			subject.onComplete();
 		}
 	}
+	public static class ConnectableObservableBasic extends Basic {
+		public void example1(String[] array) throws Exception {
+			System.out.println("----------example1----------");
+			
+			
+			ConnectableObservable<String> source = Observable.interval(100L, TimeUnit.MILLISECONDS)
+			.map(Long::intValue)
+			.map(i -> array[i])
+			.take(array.length)
+			.publish();
+			
+			source.subscribe(data -> System.out.println("ReplaySubscriber #1 => " + data));
+			source.subscribe(data -> System.out.println("ReplaySubscriber #2 => " + data));
+			source.connect();
+			
+			Thread.sleep(250);
+			source.subscribe(data -> System.out.println("ReplaySubscriber #3 => " + data));
+			Thread.sleep(100);
+		}
+	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		RxJavaBasic.ObservableBasic observer = new ObservableBasic();
 		observer.just();
 		observer.create();
@@ -193,5 +225,8 @@ public class RxJavaBasic {
 		
 		RxJavaBasic.ReplaySubjectBasic replaySubject = new ReplaySubjectBasic();
 		replaySubject.example1();
+		
+		RxJavaBasic.ConnectableObservableBasic connectableObservable = new ConnectableObservableBasic();
+		connectableObservable.example1(new String[] { "1", "2", "3" });
 	}
 }
