@@ -19,16 +19,6 @@ import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.ReplaySubject;
 
 public class RxJavaBasic {
-	public static final int DIVIDE_SIZE = 40;
-	
-	public static class Basic {
-		public Basic() {
-			String title = this.getClass().getSimpleName();
-			int count = DIVIDE_SIZE - title.length();
-			for (int i = 0; i < count; i++) { System.out.print("-"); }
-			System.out.println(title);
-		}
-	}
 	public static class ObservableBasic extends Basic {
 		public void just() {
 			Disposable disposable = Observable.just("Hello", "Rx World")
@@ -181,6 +171,32 @@ public class RxJavaBasic {
 			Thread.sleep(100);
 		}
 	}
+	public static class OperatorsBasic extends Basic {
+		public void map(String data) {
+			Observable.just(data)
+			.map(Integer::parseInt)
+			.subscribe(System.out::println);
+		}
+		public void map(String[] array) {
+			Observable.fromArray(array)
+			.map(s -> {
+				switch(s) {
+				case "100":
+					return 1;
+				case "101":
+					return 2;
+				default:
+					return 3;
+				}
+			})
+			.subscribe(System.out::println);
+		}
+		public void flatMap(String[] array) {
+			Observable.fromArray(array)
+			.flatMap(s -> Observable.just(s + "1", s + "2"))
+			.subscribe(System.out::println);
+		}
+	}
 	
 	public static void main(String[] args) throws Exception {
 		RxJavaBasic.ObservableBasic observer = new ObservableBasic();
@@ -228,5 +244,10 @@ public class RxJavaBasic {
 		
 		RxJavaBasic.ConnectableObservableBasic connectableObservable = new ConnectableObservableBasic();
 		connectableObservable.example1(new String[] { "1", "2", "3" });
+		
+		RxJavaBasic.OperatorsBasic operators = new OperatorsBasic();
+		operators.map("10");
+		operators.map(new String[] { "100", "101", "102", "103" });
+		operators.flatMap(new String[] { "100", "101", "102", "103" });
 	}
 }
