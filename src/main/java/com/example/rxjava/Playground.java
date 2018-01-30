@@ -15,14 +15,11 @@ public class Playground {
 		
 		@Override
 		public void run() {
-			Integer[] array = new Integer[] { 2, 3, 4, 5, 6, 7, 8, 9 };
-			
-			Observable.fromArray(array)
+			Observable.range(2, 8)
 			.flatMap(left -> {
-				Integer[] dan = new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 				System.out.println("------------" + left + "´Ü ------------");
 				
-				return Observable.fromArray(dan)
+				return Observable.range(1, 9)
 				.map(right -> {
 					Data result = new Data();
 					result.left = left;
