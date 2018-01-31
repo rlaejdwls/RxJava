@@ -5,9 +5,13 @@ public class Basic {
 	
 	public Basic() {
 		String title = this.getClass().getSimpleName();
-		int count = DIVIDE_SIZE - title.length();
-		for (int i = 0; i < count; i++) { System.out.print("-"); }
-		System.out.println(title);
+		print(title);
+	}
+	public void print(String data) {
+		String result = "";
+		int count = DIVIDE_SIZE - data.length();
+		for (int i = 0; i < count; i++) { result += "-"; }
+		System.out.println(result + data);
 	}
 	
 	public void run() {};
