@@ -21,6 +21,7 @@ import io.reactivex.subjects.ReplaySubject;
 public class RxJavaBasic {
 	public static class ObservableBasic extends Basic {
 		public void just() {
+			print("just");
 			Disposable disposable = Observable.just("Hello", "Rx World")
 			.subscribe(
 					(data) -> System.out.println(data),
@@ -29,6 +30,7 @@ public class RxJavaBasic {
 			System.out.println(disposable.isDisposed());
 		}
 		public void create() {
+			print("create");
 			Observable.create((emitter) -> {
 				emitter.onNext("Hello");
 				emitter.onNext("Rx World");
@@ -36,22 +38,27 @@ public class RxJavaBasic {
 			}).subscribe(System.out::println);
 		}
 		public <T> void fromArray(T[] data) {
+			print("fromArray");
 			Observable.fromArray(data)
 			.subscribe(System.out::println);
 		}
 		public <T> void fromIterable(Iterable<T> datas) {
+			print("fromIterable");
 			Observable.fromIterable(datas)
 			.subscribe(System.out::println);
 		}
 		public <T> void fromCallable(Callable<T> callable) {
+			print("fromCallable");
 			Observable.fromCallable(callable)
 			.subscribe(System.out::println);
 		}
 		public <T> void fromFuture(Callable<T> callable) {
+			print("fromFuture");
 			Observable.fromFuture(Executors.newSingleThreadExecutor().submit(callable))
 			.subscribe(System.out::println);
 		}
 		public <T> void fromPublisher(Publisher<T> publisher) {
+			print("fromPublisher");
 			Observable.fromPublisher(publisher)
 			.subscribe(System.out::println);
 		}
@@ -84,7 +91,7 @@ public class RxJavaBasic {
 	}
 	public static class AsyncSubjectBasic extends Basic {
 		public void example1() {
-			System.out.println("----------example1----------");
+			print("example1");
 			AsyncSubject<String> subject = AsyncSubject.create();
 			subject.subscribe(data -> System.out.println("AsyncSubscriber #1 => " + data));
 			subject.onNext("1");
@@ -94,7 +101,7 @@ public class RxJavaBasic {
 			subject.onComplete();
 		}
 		public void example2() {
-			System.out.println("----------example2----------");
+			print("example2");
 			Float[] temperature = { 10.1f, 13.4f, 12.5f };
 			AsyncSubject<Float> subject = AsyncSubject.create();
 			subject.subscribe(data -> System.out.println("AsyncSubscriber #1 => " + data));
@@ -103,7 +110,7 @@ public class RxJavaBasic {
 			.subscribe(subject);
 		}
 		public void example3() {
-			System.out.println("----------example3----------");
+			print("example3");
 			AsyncSubject<String> subject = AsyncSubject.create();
 			subject.onNext("1");
 			subject.subscribe(data -> System.out.println("AsyncSubscriber #1 => " + data));
@@ -116,7 +123,7 @@ public class RxJavaBasic {
 	}
 	public static class BehaviorSubjectBasic extends Basic {
 		public void example1() {
-			System.out.println("----------example1----------");
+			print("example1");
 			BehaviorSubject<String> subject = BehaviorSubject.createDefault("6");
 			subject.subscribe(data -> System.out.println("BehaviorSubscriber #1 => " + data));
 			subject.onNext("1");
@@ -128,7 +135,7 @@ public class RxJavaBasic {
 	}
 	public static class PublishSubjectBasic extends Basic {
 		public void example1() {
-			System.out.println("----------example1----------");
+			print("example1");
 			PublishSubject<String> subject = PublishSubject.create();
 			subject.subscribe(data -> System.out.println("PublishSubscriber #1 => " + data));
 			subject.onNext("1");
@@ -140,7 +147,7 @@ public class RxJavaBasic {
 	}
 	public static class ReplaySubjectBasic extends Basic {
 		public void example1() {
-			System.out.println("----------example1----------");
+			print("example1");
 			ReplaySubject<String> subject = ReplaySubject.create();
 			subject.subscribe(data -> System.out.println("ReplaySubscriber #1 => " + data));
 			subject.onNext("1");
@@ -153,8 +160,7 @@ public class RxJavaBasic {
 	}
 	public static class ConnectableObservableBasic extends Basic {
 		public void example1(String[] array) throws Exception {
-			System.out.println("----------example1----------");
-			
+			print("example1");
 			
 			ConnectableObservable<String> source = Observable.interval(100L, TimeUnit.MILLISECONDS)
 			.map(Long::intValue)
@@ -173,11 +179,13 @@ public class RxJavaBasic {
 	}
 	public static class OperatorsBasic extends Basic {
 		public void map(String data) {
+			print("map");
 			Observable.just(data)
 			.map(Integer::parseInt)
 			.subscribe(System.out::println);
 		}
 		public void map(String[] array) {
+			print("map");
 			Observable.fromArray(array)
 			.map(s -> {
 				switch(s) {
@@ -192,8 +200,57 @@ public class RxJavaBasic {
 			.subscribe(System.out::println);
 		}
 		public void flatMap(String[] array) {
+			print("flatMap");
 			Observable.fromArray(array)
 			.flatMap(s -> Observable.just(s + "1", s + "2"))
+			.subscribe(System.out::println);
+		}
+		public void filter(String[] array) {
+			print("filter");
+			Observable.fromArray(array)
+			.filter(s -> !(s.indexOf("CIRCLE") > -1))
+			.subscribe(System.out::println);
+		}
+		public void first(String[] array) {
+			print("first");
+			Observable.fromArray(array)
+			.first("0 DEFAULT")
+			.subscribe(System.out::println);
+		}
+		public void last(String[] array) {
+			print("last");
+			Observable.fromArray(array)
+			.last("9 MAXIMUM")
+			.subscribe(System.out::println);
+		}
+		public void take(int count, String[] array) {
+			print("take");
+			Observable.fromArray(array)
+			.take(count)
+			.subscribe(System.out::println);
+		}
+		public void takeLast(int count, String[] array) {
+			print("takeLast");
+			Observable.fromArray(array)
+			.takeLast(count)
+			.subscribe(System.out::println);
+		}
+		public void skip(int count, String[] array) {
+			print("skip");
+			Observable.fromArray(array)
+			.skip(count)
+			.subscribe(System.out::println);
+		}
+		public void skipLast(int count, String[] array) {
+			print("skipLast");
+			Observable.fromArray(array)
+			.skipLast(count)
+			.subscribe(System.out::println);
+		}
+		public void reduce(String[] array) {
+			print("reduce");
+			Observable.fromArray(array)
+			.reduce((in, out) -> out + "(" + in + ")")
 			.subscribe(System.out::println);
 		}
 	}
@@ -249,5 +306,13 @@ public class RxJavaBasic {
 		operators.map("10");
 		operators.map(new String[] { "100", "101", "102", "103" });
 		operators.flatMap(new String[] { "100", "101", "102", "103" });
+		operators.filter(new String[] { "1 CIRCLE", "2 DIAMOND", "3 TRIANGLE", "4 DIAMOND", "5 CIRCLE", "6 HEXAGON" });
+		operators.first(new String[] { "1 CIRCLE", "2 DIAMOND", "3 TRIANGLE", "4 DIAMOND", "5 CIRCLE", "6 HEXAGON" });
+		operators.last(new String[] { "1 CIRCLE", "2 DIAMOND", "3 TRIANGLE", "4 DIAMOND", "5 CIRCLE", "6 HEXAGON" });
+		operators.take(3, new String[] { "1 CIRCLE", "2 DIAMOND", "3 TRIANGLE", "4 DIAMOND", "5 CIRCLE", "6 HEXAGON" });
+		operators.takeLast(2, new String[] { "1 CIRCLE", "2 DIAMOND", "3 TRIANGLE", "4 DIAMOND", "5 CIRCLE", "6 HEXAGON" });
+		operators.skip(1, new String[] { "1 CIRCLE", "2 DIAMOND", "3 TRIANGLE", "4 DIAMOND", "5 CIRCLE", "6 HEXAGON" });
+		operators.skipLast(4, new String[] { "1 CIRCLE", "2 DIAMOND", "3 TRIANGLE", "4 DIAMOND", "5 CIRCLE", "6 HEXAGON" });
+		operators.reduce(new String[] { "1", "3", "5" });
 	}
 }
